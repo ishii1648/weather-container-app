@@ -12,6 +12,7 @@ variable "repo_name" {
 
 variable "repo_branch" {
   default = "master"
+  # default = "develop"
 }
 
 variable "project_name" {

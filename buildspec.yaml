@@ -1,30 +1,27 @@
 version: 0.2
 env:
- variables:
-   IMAGE_NAME: "sysdiglabs/dummy-vuln-app:latest"
-   SCAN_IMAGE_NAME: "sysdiglabs/secure_inline_scan:latest"
-#  parameter-store:
-#    DOCKER_LOGIN_USER: dockerLoginUser
-#    DOCKER_LOGIN_PASSWORD: dockerLoginPassword
-#    SYSDIG_SECURE_TOKEN: sysdigApiToken
+  variables:
+    CLUSTER_NAME: 
+    ECR_REPO_URI:
 phases:
-#  install:
-#    runtime-versions:
-#      docker: 18
-#    commands:
-#    - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&
-#    - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"      
- pre_build:
-   commands:
-   - echo "pre_build"
-  #  - $(aws ecr get-login --no-include-email)
-  #  - docker pull $SCAN_IMAGE_NAME
- build:
-   commands:
-   - echo "build"
-  #  - docker build . -t $IMAGE_NAME
+  install:
+    commands:
+      - apt install -y awscli git python3
+      - curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator
+      - chmod +x ./aws-iam-authenticator
+      - mkdir -p ~/bin && cp ./aws-iam-authenticator ~/bin/aws-iam-authenticator && export PATH=~/bin:$PATH
+      - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+  pre_build:
+    commands:
+      - mkdir ~/.kube/
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --kubeconfig ~/.kube/config
+      # - export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - $(aws ecr get-login --no-include-email)
+  build:
+    commands:
+      - kubectl get nodes
  post_build:
    commands:
    - echo "post_build"
-  #  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock $SCAN_IMAGE_NAME /bin/inline_scan analyze -s https://secure.sysdig.com -k $SYSDIG_SECURE_TOKEN $IMAGE_NAME
-  #  - docker push $IMAGE_NAME

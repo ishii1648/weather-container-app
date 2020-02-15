@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "codepipeline_bucket" {
-  bucket = "weather-container-app-pipeline-bucket"
+  bucket        = "weather-container-app-pipeline-bucket"
   force_destroy = true
-  acl    = "private"
+  acl           = "private"
 }
 
 resource "aws_codepipeline" "codepipeline" {
@@ -25,9 +25,10 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner               = var.repo_owner
-        Repo                = var.repo_name
-        Branch              = var.repo_branch
+        Owner                = var.repo_owner
+        Repo                 = var.repo_name
+        Branch               = var.repo_branch
+        PollForSourceChanges = false
       }
     }
   }
