@@ -1,7 +1,7 @@
 version: 0.2
 env:
   variables:
-    CLUSTER_NAME: 
+    CLUSTER_NAME: eks-cluster
     ECR_REPO_URI:
 phases:
   install:
