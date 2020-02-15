@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-name: app
+  name: app
   labels:
-    app: app
+    role: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app
+      role: app
   template:
     metadata:
       labels:
-        app: app
+        role: app
     spec:
       containers:
       - name: app
-        image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/app:0.9
+        image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/app:0.91
         ports:
         - containerPort: 5000
 ---
@@ -31,4 +31,4 @@ spec:
       targetPort: 5000
       protocol: TCP
   selector:
-    app: app
+    role: app

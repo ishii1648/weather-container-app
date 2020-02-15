@@ -20,7 +20,6 @@ phases:
       - export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}
   build:
     commands:
-      - cd app
       - docker build -t $ECR_REPO_URI:$TAG .
       - $(aws ecr get-login --no-include-email)
       - docker push $ECR_REPO_URI:$TAG
