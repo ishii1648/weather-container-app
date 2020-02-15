@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+name: wheather-container-app
   labels:
     role: app
 spec:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/app:0.91
+        image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/wheather-container-app:0.9
         ports:
         - containerPort: 5000
 ---
