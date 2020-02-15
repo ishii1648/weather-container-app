@@ -2,7 +2,7 @@ version: 0.2
 env:
   variables:
     CLUSTER_NAME: eks-cluster
-    ECR_REPO_URI:
+    ECR_REPO_URI: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/wheather-container-app
 phases:
   install:
     commands:
@@ -17,11 +17,14 @@ phases:
     commands:
       - mkdir ~/.kube/
       - aws eks update-kubeconfig --name $CLUSTER_NAME --kubeconfig ~/.kube/config
-      # - export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}
-      - $(aws ecr get-login --no-include-email)
+      - export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}
   build:
     commands:
-      - kubectl get nodes
+      - cd app
+      - docker build -t $ECR_REPO_URI:$TAG .
+      - $(aws ecr get-login --no-include-email)
+      - docker push $ECR_REPO_URI:$TAG
   post_build:
     commands:
-      - echo "post_build"
+      - kubectl get nodes
+      - kubectl set image deployment app app=$ECR_REPO_URI:$TAG
