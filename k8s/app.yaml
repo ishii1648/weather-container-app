@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-name: wheather-container-app
+  name: app
   labels:
     role: app
 spec:
