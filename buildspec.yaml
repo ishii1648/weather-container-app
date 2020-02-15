@@ -22,6 +22,6 @@ phases:
   build:
     commands:
       - kubectl get nodes
- post_build:
-   commands:
-   - echo "post_build"
+  post_build:
+    commands:
+      - echo "post_build"
