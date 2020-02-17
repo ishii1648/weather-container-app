@@ -20,12 +20,6 @@ class Area(base):
     area_api_uri = Column(Text)
 
 
-class History(base):
-    __tablename__ = 'histories'
-
-    id      = Column(Integer, primary_key=True)
-    
-
 def create_database(user, password, host, dbname):
     uri    = 'mysql://%s:%s@%s' % (user, password, host)
     engine = create_engine(uri, pool_recycle=3600, encoding='utf-8')
@@ -79,7 +73,7 @@ if __name__ == "__main__":
     area_list = fetch_areas(api_uri)
 
     user     = 'root'
-    password = os.environ.get("MYSQL_PASSWORD")
+    password = os.environ.get("MYSQL_ROOT_PASSWORD")
     host     = os.environ.get("MYSQL_HOST")
     dbname   = 'weather'
 
