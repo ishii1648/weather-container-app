@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    role: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: api
+  template:
+    metadata:
+      labels:
+        role: api
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+        tier: back-end
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z db 3306; do echo waiting for myservice; sleep 2; done;",
+            ]
+      containers:
+        - name: api
+          image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/weather-csv-api:v0.98 
+          ports:
+          - containerPort: 5000
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret 
+                  key: dbpass 
+            - name: MYSQL_HOST
+              value: db
+            - name: REDIS_HOST
+              value: cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  type: NodePort
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+  selector:
+    role: api

@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-db
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+        tier: back-end
+      imagePullSecrets:
+        - name: ecr
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z db 3306; do echo waiting for myservice; sleep 2; done;",
+            ]
+      containers:
+        - name: setup-db
+          image: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/setup-db-job:v0.97
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysecret 
+                key: dbpass 
+          - name: MYSQL_HOST
+            value: db
+      restartPolicy: Never

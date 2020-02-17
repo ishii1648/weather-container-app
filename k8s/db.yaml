@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: db
+  template:
+    metadata:
+      labels:
+        role: db
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+        tier: back-end
+      containers:
+      - name: db
+        image: mysql:5.7
+        args:
+          - mysqld
+          - --ignore-db-dir=lost+found
+          - --character-set-server=utf8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret 
+              key: dbpass 
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: dbdata-pv-storage
+      volumes:
+      - name: dbdata-pv-storage
+        persistentVolumeClaim:
+          claimName: db-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: NodePort
+  ports:
+  - name: db
+    port: 3306
+    protocol: TCP
+  selector:
+    role: db

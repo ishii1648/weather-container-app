@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: cache
+  template:
+    metadata:
+      labels:
+        role: cache
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+        tier: back-end
+      containers:
+      - name: cache
+        image: redis:latest
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache
+spec:
+  type: NodePort
+  ports:
+  - name: cache
+    port: 6379
+    protocol: TCP
+  selector:
+    role: cache
