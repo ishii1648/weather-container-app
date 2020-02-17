@@ -2,7 +2,7 @@ version: 0.2
 env:
   variables:
     CLUSTER_NAME: eks-cluster
-    ECR_REPO_URI: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/wheather-container-app
+    API_REPO_URI: 787080764332.dkr.ecr.ap-northeast-1.amazonaws.com/weather-csv-api
 phases:
   install:
     commands:
@@ -20,10 +20,11 @@ phases:
       - export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}
   build:
     commands:
-      - docker build -t $ECR_REPO_URI:$TAG .
       - $(aws ecr get-login --no-include-email)
-      - docker push $ECR_REPO_URI:$TAG
+      - cd api/
+      - docker build -t $API_REPO_URI:$TAG .
+      - docker push $API_REPO_URI:$TAG
   post_build:
     commands:
       - kubectl get nodes
-      - kubectl set image deployment app app=$ECR_REPO_URI:$TAG
+      - kubectl set image deployment api api=$API_REPO_URI:$TAG
