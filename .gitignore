@@ -8,4 +8,4 @@ terraform/*_override.tf
 terraform/*_override.tf.json
 terraform/kubeconfig_eks-cluster
 
-job/.env
+.env

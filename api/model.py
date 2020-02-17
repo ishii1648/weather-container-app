@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 base     = declarative_base()
 user     = 'root'
-password = os.environ.get("MYSQL_PASSWORD")
+password = os.environ.get("MYSQL_ROOT_PASSWORD")
 host     = os.environ.get("MYSQL_HOST")
 dbname   = 'weather'
 uri      = 'mysql://%s:%s@%s/%s?charset=utf8' % (user, password, host, dbname)

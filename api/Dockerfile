@@ -5,7 +5,12 @@ ARG project_dir=/api/
 
 WORKDIR $project_dir
 
-ADD main.py $project_dir
-RUN pip install flask uWSGI requests redis
+COPY main.py $project_dir
+COPY model.py $project_dir
+COPY uwsgi.ini $project_dir
+RUN pip install flask uWSGI requests redis sqlalchemy mysqlclient
+
+ENV MYSQL_HOST=mysqld
+ENV REDIS_HOST=redis
 
 CMD ["uwsgi", "uwsgi.ini"]
